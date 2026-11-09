@@ -12,8 +12,23 @@ create table if not exists public.ausgaben (
 -- Reparatur, falls die Tabelle schon vorher (ohne alle Spalten) angelegt wurde.
 -- "create table if not exists" überspringt eine vorhandene Tabelle; diese Zeilen
 -- ergänzen fehlende Spalten. Vorhandene Einträge bekommen automatisch eine id.
-alter table public.ausgaben
-  add column if not exists id bigint generated always as identity primary key;
+-- Hat die Tabelle schon einen anderen Primärschlüssel, wird id nur "unique".
+do $$
+begin
+  if not exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public' and table_name = 'ausgaben' and column_name = 'id'
+  ) then
+    if exists (
+      select 1 from pg_constraint
+      where conrelid = 'public.ausgaben'::regclass and contype = 'p'
+    ) then
+      alter table public.ausgaben add column id bigint generated always as identity unique;
+    else
+      alter table public.ausgaben add column id bigint generated always as identity primary key;
+    end if;
+  end if;
+end $$;
 alter table public.ausgaben
   add column if not exists created_at timestamptz not null default now();
 alter table public.ausgaben add column if not exists kategorie text;
