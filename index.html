@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f3f2ee" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0e100f" media="(prefers-color-scheme: dark)">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Bargeld">
+  <title>Bargeld-App</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="icons/icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+  <script src="config.js"></script>
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <main id="app">
+
+    <!-- Start -->
+    <section class="screen" id="screen-home">
+      <header class="home-head">
+        <p class="eyebrow">Bargeld</p>
+        <p class="week-label">Ausgegeben diese Woche</p>
+        <p class="week-sum" id="home-week">–</p>
+      </header>
+
+      <p class="banner" id="demo-banner" hidden>
+        Demo-Modus: <code>config.js</code> ist noch leer. Einträge bleiben nur in diesem Browser.
+      </p>
+
+      <div class="main-wrap">
+        <button class="main-btn" id="btn-add" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          <span>Ausgabe eintragen</span>
+        </button>
+      </div>
+
+      <nav class="tiles" aria-label="Bereiche">
+        <button class="tile" type="button" id="btn-scan">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3.2"/></svg>
+          <span>Kassenbon scannen</span>
+        </button>
+        <button class="tile" type="button" data-go="stats">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M12 20V5M19 20v-6"/></svg>
+          <span>Statistik</span>
+        </button>
+        <button class="tile" type="button" data-go="history">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>
+          <span>Verlauf</span>
+        </button>
+        <button class="tile" type="button" data-go="settings">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>
+          <span>Einstellungen</span>
+        </button>
+      </nav>
+
+      <input type="file" id="scan-input" accept="image/*" capture="environment" hidden>
+    </section>
+
+    <!-- Eintrag anlegen / bearbeiten -->
+    <section class="screen" id="screen-entry" hidden>
+      <header class="topbar">
+        <button class="back" type="button" data-back>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Zurück
+        </button>
+        <h1 id="entry-title">Ausgabe eintragen</h1>
+      </header>
+      <form id="entry-form" novalidate>
+        <figure class="photo" id="entry-photo" hidden>
+          <img alt="Foto vom Kassenbon">
+          <figcaption>Lies den Betrag vom Bon ab und bestätige ihn unten.</figcaption>
+        </figure>
+
+        <label class="amount">
+          <span class="label">Betrag</span>
+          <span class="amount-row">
+            <input id="f-betrag" inputmode="decimal" autocomplete="off" placeholder="0,00" aria-describedby="f-error">
+            <span class="currency">€</span>
+          </span>
+        </label>
+        <p class="error" id="f-error" role="alert" hidden></p>
+
+        <label class="field">
+          <span class="label">Datum</span>
+          <input type="date" id="f-datum">
+        </label>
+
+        <fieldset class="field">
+          <legend class="label">Kategorie</legend>
+          <div class="chips" id="f-kategorien"></div>
+        </fieldset>
+
+        <label class="field">
+          <span class="label">Notiz <em>optional</em></span>
+          <input id="f-notiz" maxlength="200" autocomplete="off" placeholder="z. B. Bäcker">
+        </label>
+
+        <button class="primary" type="submit" id="f-save">Speichern</button>
+        <button class="danger" type="button" id="f-delete" hidden>Eintrag löschen</button>
+      </form>
+    </section>
+
+    <!-- Statistik -->
+    <section class="screen" id="screen-stats" hidden>
+      <header class="topbar">
+        <button class="back" type="button" data-back>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Zurück
+        </button>
+        <h1>Statistik</h1>
+      </header>
+      <div class="content" id="stats-body"></div>
+    </section>
+
+    <!-- Verlauf -->
+    <section class="screen" id="screen-history" hidden>
+      <header class="topbar">
+        <button class="back" type="button" data-back>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Zurück
+        </button>
+        <h1>Verlauf</h1>
+      </header>
+      <div class="content" id="history-body"></div>
+    </section>
+
+    <!-- Einstellungen -->
+    <section class="screen" id="screen-settings" hidden>
+      <header class="topbar">
+        <button class="back" type="button" data-back>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Zurück
+        </button>
+        <h1>Einstellungen</h1>
+      </header>
+      <div class="content">
+        <h2 class="section-title">Kategorien</h2>
+        <ul class="cat-list" id="cat-list"></ul>
+        <form class="cat-add" id="cat-add-form">
+          <input id="cat-new" maxlength="40" placeholder="Neue Kategorie" autocomplete="off">
+          <button type="submit" class="small">Hinzufügen</button>
+        </form>
+        <p class="hint">Kategorien werden auf diesem Gerät gespeichert. Bereits gespeicherte Ausgaben behalten ihre Kategorie, auch wenn du sie hier umbenennst oder löschst.</p>
+        <h2 class="section-title">Verbindung</h2>
+        <p class="hint" id="conn-info"></p>
+      </div>
+    </section>
+
+  </main>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>
