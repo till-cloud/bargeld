@@ -9,6 +9,16 @@ create table if not exists public.ausgaben (
   notiz      text
 );
 
+-- Reparatur, falls die Tabelle schon vorher (ohne alle Spalten) angelegt wurde.
+-- "create table if not exists" überspringt eine vorhandene Tabelle; diese Zeilen
+-- ergänzen fehlende Spalten. Vorhandene Einträge bekommen automatisch eine id.
+alter table public.ausgaben
+  add column if not exists id bigint generated always as identity primary key;
+alter table public.ausgaben
+  add column if not exists created_at timestamptz not null default now();
+alter table public.ausgaben add column if not exists kategorie text;
+alter table public.ausgaben add column if not exists notiz text;
+
 create index if not exists ausgaben_datum_idx on public.ausgaben (datum desc);
 
 -- Zugriff für die App (Publishable Key = Rolle "anon").
